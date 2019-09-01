@@ -1,8 +1,9 @@
 
 const express = require('express');
-const User= require('../models/user')
+const User= require('../models/user');
+const jwt = require('jsonwebtoken');
 //var mongodb = require('mongodb');
-  const mongoose = require('mongoose')
+  const mongoose = require('mongoose');
 
 const router = express.Router()
 const db ='mongodb://localhost:27017/EventHub'
@@ -33,8 +34,11 @@ router.get('/',(req,res)=>{
            console.log("save err == "+err)
        }
        else{
+
            console.log('data saved')
-            res.status(200).send(registerUser)
+           let playload = {subject:registerUser._id}
+           let token = jwt.sign(playload,"SecretKey")
+            res.status(200).send({token})
        }
    })
  })
@@ -57,7 +61,9 @@ router.get('/',(req,res)=>{
 
            }
            else{
-               res.status(200).send(user)
+            let playload = {subject:user._id}
+            let token = jwt.sign(playload,"SecretKey")
+               res.status(200).send({token})
            }
      }  
 
