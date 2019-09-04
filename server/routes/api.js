@@ -25,6 +25,34 @@ router.get('/',(req,res)=>{
  })
 
 
+function verifyToken(req,res , next ){
+
+console.log("req" ,req.headers);
+
+if(!req.headers.authorization){
+  return res.status(401).send("Unauthoeized Request")
+}
+let token =req.headers.authorization.split(' ')[1]
+
+if(token == null){
+  return res.status(401).send("Unauthoeized Request")
+
+}
+
+jwt.verify(token, "SecretKey", (err , data)=>{
+if(err){
+  return res.status(401).send("Unauthoeized Request")
+
+}
+else {
+  req.userId = playload.subject
+  next(); 
+  
+}
+});
+
+}
+
  router.post('/register', (req,res) => {
    let userData = req.body
    let user = new User(userData)
@@ -110,7 +138,7 @@ res.status(200).send(events)
   })
 
 
-  router.get('/specialevents',(req, res)=>{
+  router.get('/specialevents',verifyToken,(req, res)=>{
    
     let specialEvents =[
         {
